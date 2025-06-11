@@ -108,16 +108,23 @@
                 this.keys = {};
                 this.setupInput();
                 
-                // Game objects
-                this.platforms = this.createLevel();
-                this.coins = this.createCoins();
-                this.enemies = this.createEnemies();
-                this.goal = { x: this.canvas.width * 0.9, y: this.canvas.height - 80, width: 40, height: 40 };Coins();
-                this.enemies = this.createEnemies();
-                this.goal = { x: this.canvas.width - 100, y: this.canvas.height - 80, width: 40, height: 40 };
+                // Initialize game objects
+                this.initializeLevel();
                 
                 // Start game loop
                 this.gameLoop();
+            }
+            
+            initializeLevel() {
+                this.platforms = this.createLevel();
+                this.coinsList = this.createCoins();
+                this.enemies = this.createEnemies();
+                this.goal = { 
+                    x: this.canvas.width * 0.9, 
+                    y: this.canvas.height - 80, 
+                    width: 40, 
+                    height: 40 
+                };
             }
             
             setupInput() {
@@ -139,97 +146,66 @@
                 const groundY = h - 40;
                 
                 const levels = {
-                    1: {
-                        platforms: [
-                            // Ground platforms - responsive to screen width
-                            { x: 0, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
-                            { x: w * 0.25, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
-                            { x: w * 0.5, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
-                            { x: w * 0.75, y: groundY, width: w * 0.25, height: 40, color: '#8B4513' },
-                            
-                            // Floating platforms - responsive positioning
-                            { x: w * 0.2, y: h - 150, width: w * 0.08, height: 20, color: '#228B22' },
-                            { x: w * 0.37, y: h - 200, width: w * 0.08, height: 20, color: '#228B22' },
-                            { x: w * 0.54, y: h - 180, width: w * 0.1, height: 20, color: '#228B22' }
-                        ]
-                    },
-                    2: {
-                        platforms: [
-                            // Bigger gaps for jumping challenge
-                            { x: 0, y: groundY, width: w * 0.12, height: 40, color: '#8B4513' },
-                            { x: w * 0.2, y: groundY, width: w * 0.08, height: 40, color: '#8B4513' },
-                            { x: w * 0.35, y: groundY, width: w * 0.12, height: 40, color: '#8B4513' },
-                            { x: w * 0.55, y: groundY, width: w * 0.08, height: 40, color: '#8B4513' },
-                            { x: w * 0.7, y: groundY, width: w * 0.3, height: 40, color: '#8B4513' },
-                            
-                            // Higher floating platforms
-                            { x: w * 0.14, y: h - 160, width: w * 0.06, height: 20, color: '#228B22' },
-                            { x: w * 0.29, y: h - 220, width: w * 0.06, height: 20, color: '#228B22' },
-                            { x: w * 0.48, y: h - 180, width: w * 0.06, height: 20, color: '#228B22' },
-                            { x: w * 0.64, y: h - 280, width: w * 0.06, height: 20, color: '#228B22' }
-                        ]
-                    },
-                    3: {
-                        platforms: [
-                            // Vertical challenge - staircase
-                            { x: 0, y: groundY, width: w * 0.1, height: 40, color: '#8B4513' },
-                            { x: w * 0.85, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
-                            
-                            // Staircase of platforms
-                            { x: w * 0.12, y: h - 120, width: w * 0.06, height: 20, color: '#228B22' },
-                            { x: w * 0.22, y: h - 180, width: w * 0.06, height: 20, color: '#228B22' },
-                            { x: w * 0.12, y: h - 240, width: w * 0.06, height: 20, color: '#228B22' },
-                            { x: w * 0.22, y: h - 300, width: w * 0.06, height: 20, color: '#228B22' },
-                            
-                            // Moving platforms (red ones)
-                            { x: w * 0.35, y: h - 200, width: w * 0.05, height: 15, color: '#FF6347' },
-                            { x: w * 0.45, y: h - 280, width: w * 0.05, height: 15, color: '#FF6347' },
-                            { x: w * 0.6, y: h - 220, width: w * 0.06, height: 20, color: '#228B22' }
-                        ]
-                    },
-                    4: {
-                        platforms: [
-                            // Advanced platforming - scattered
-                            { x: 0, y: groundY, width: w * 0.08, height: 40, color: '#8B4513' },
-                            { x: w * 0.15, y: h - 80, width: w * 0.06, height: 40, color: '#8B4513' },
-                            { x: w * 0.3, y: h - 120, width: w * 0.08, height: 40, color: '#8B4513' },
-                            { x: w * 0.45, y: h - 80, width: w * 0.06, height: 40, color: '#8B4513' },
-                            { x: w * 0.6, y: groundY, width: w * 0.4, height: 40, color: '#8B4513' },
-                            
-                            // Precision platforms (red)
-                            { x: w * 0.09, y: h - 200, width: w * 0.04, height: 15, color: '#FF6347' },
-                            { x: w * 0.23, y: h - 250, width: w * 0.04, height: 15, color: '#FF6347' },
-                            { x: w * 0.39, y: h - 200, width: w * 0.04, height: 15, color: '#FF6347' },
-                            { x: w * 0.52, y: h - 280, width: w * 0.06, height: 20, color: '#228B22' },
-                            
-                            // High platforms (blue)
-                            { x: w * 0.15, y: h - 350, width: w * 0.15, height: 20, color: '#4169E1' },
-                            { x: w * 0.4, y: h - 320, width: w * 0.12, height: 20, color: '#4169E1' }
-                        ]
-                    },
-                    5: {
-                        platforms: [
-                            // Master level - minimal ground
-                            { x: 0, y: groundY, width: w * 0.06, height: 40, color: '#8B4513' },
-                            { x: w * 0.88, y: groundY, width: w * 0.12, height: 40, color: '#8B4513' },
-                            
-                            // Precision jumping required - very small platforms
-                            { x: w * 0.09, y: h - 140, width: w * 0.04, height: 15, color: '#FF6347' },
-                            { x: w * 0.17, y: h - 200, width: w * 0.03, height: 15, color: '#FF6347' },
-                            { x: w * 0.25, y: h - 260, width: w * 0.04, height: 15, color: '#FF6347' },
-                            { x: w * 0.33, y: h - 200, width: w * 0.03, height: 15, color: '#FF6347' },
-                            { x: w * 0.41, y: h - 280, width: w * 0.05, height: 15, color: '#FF6347' },
-                            { x: w * 0.49, y: h - 220, width: w * 0.04, height: 15, color: '#FF6347' },
-                            { x: w * 0.57, y: h - 160, width: w * 0.06, height: 20, color: '#228B22' },
-                            
-                            // Final challenge platforms (purple)
-                            { x: w * 0.24, y: h - 380, width: w * 0.24, height: 20, color: '#9400D3' },
-                            { x: w * 0.36, y: h - 320, width: w * 0.08, height: 15, color: '#FF6347' }
-                        ]
-                    }
+                    1: [
+                        { x: 0, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
+                        { x: w * 0.25, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
+                        { x: w * 0.5, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
+                        { x: w * 0.75, y: groundY, width: w * 0.25, height: 40, color: '#8B4513' },
+                        { x: w * 0.2, y: h - 150, width: w * 0.08, height: 20, color: '#228B22' },
+                        { x: w * 0.37, y: h - 200, width: w * 0.08, height: 20, color: '#228B22' },
+                        { x: w * 0.54, y: h - 180, width: w * 0.1, height: 20, color: '#228B22' }
+                    ],
+                    2: [
+                        { x: 0, y: groundY, width: w * 0.12, height: 40, color: '#8B4513' },
+                        { x: w * 0.2, y: groundY, width: w * 0.08, height: 40, color: '#8B4513' },
+                        { x: w * 0.35, y: groundY, width: w * 0.12, height: 40, color: '#8B4513' },
+                        { x: w * 0.55, y: groundY, width: w * 0.08, height: 40, color: '#8B4513' },
+                        { x: w * 0.7, y: groundY, width: w * 0.3, height: 40, color: '#8B4513' },
+                        { x: w * 0.14, y: h - 160, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.29, y: h - 220, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.48, y: h - 180, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.64, y: h - 280, width: w * 0.06, height: 20, color: '#228B22' }
+                    ],
+                    3: [
+                        { x: 0, y: groundY, width: w * 0.1, height: 40, color: '#8B4513' },
+                        { x: w * 0.85, y: groundY, width: w * 0.15, height: 40, color: '#8B4513' },
+                        { x: w * 0.12, y: h - 120, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.22, y: h - 180, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.12, y: h - 240, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.22, y: h - 300, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.35, y: h - 200, width: w * 0.05, height: 15, color: '#FF6347' },
+                        { x: w * 0.45, y: h - 280, width: w * 0.05, height: 15, color: '#FF6347' },
+                        { x: w * 0.6, y: h - 220, width: w * 0.06, height: 20, color: '#228B22' }
+                    ],
+                    4: [
+                        { x: 0, y: groundY, width: w * 0.08, height: 40, color: '#8B4513' },
+                        { x: w * 0.15, y: h - 80, width: w * 0.06, height: 40, color: '#8B4513' },
+                        { x: w * 0.3, y: h - 120, width: w * 0.08, height: 40, color: '#8B4513' },
+                        { x: w * 0.45, y: h - 80, width: w * 0.06, height: 40, color: '#8B4513' },
+                        { x: w * 0.6, y: groundY, width: w * 0.4, height: 40, color: '#8B4513' },
+                        { x: w * 0.09, y: h - 200, width: w * 0.04, height: 15, color: '#FF6347' },
+                        { x: w * 0.23, y: h - 250, width: w * 0.04, height: 15, color: '#FF6347' },
+                        { x: w * 0.39, y: h - 200, width: w * 0.04, height: 15, color: '#FF6347' },
+                        { x: w * 0.52, y: h - 280, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.15, y: h - 350, width: w * 0.15, height: 20, color: '#4169E1' },
+                        { x: w * 0.4, y: h - 320, width: w * 0.12, height: 20, color: '#4169E1' }
+                    ],
+                    5: [
+                        { x: 0, y: groundY, width: w * 0.06, height: 40, color: '#8B4513' },
+                        { x: w * 0.88, y: groundY, width: w * 0.12, height: 40, color: '#8B4513' },
+                        { x: w * 0.09, y: h - 140, width: w * 0.04, height: 15, color: '#FF6347' },
+                        { x: w * 0.17, y: h - 200, width: w * 0.03, height: 15, color: '#FF6347' },
+                        { x: w * 0.25, y: h - 260, width: w * 0.04, height: 15, color: '#FF6347' },
+                        { x: w * 0.33, y: h - 200, width: w * 0.03, height: 15, color: '#FF6347' },
+                        { x: w * 0.41, y: h - 280, width: w * 0.05, height: 15, color: '#FF6347' },
+                        { x: w * 0.49, y: h - 220, width: w * 0.04, height: 15, color: '#FF6347' },
+                        { x: w * 0.57, y: h - 160, width: w * 0.06, height: 20, color: '#228B22' },
+                        { x: w * 0.24, y: h - 380, width: w * 0.24, height: 20, color: '#9400D3' },
+                        { x: w * 0.36, y: h - 320, width: w * 0.08, height: 15, color: '#FF6347' }
+                    ]
                 };
                 
-                return levels[this.level] ? levels[this.level].platforms : levels[1].platforms;
+                return levels[this.level] || levels[1];
             }
             
             createCoins() {
@@ -378,7 +354,7 @@
             }
             
             checkCollisions() {
-                this.coins.forEach(coin => {
+                this.coinsList.forEach(coin => {
                     if (!coin.collected && this.checkCollision(this.player, coin)) {
                         coin.collected = true;
                         this.score += 100;
@@ -422,7 +398,7 @@
                     this.ctx.fillRect(platform.x, platform.y, platform.width, 4);
                 });
                 
-                this.coins.forEach(coin => {
+                this.coinsList.forEach(coin => {
                     if (!coin.collected) {
                         this.ctx.fillStyle = '#FFD700';
                         this.ctx.beginPath();
@@ -526,9 +502,7 @@
                 this.player.y = this.canvas.height - 100;
                 this.player.velX = 0;
                 this.player.velY = 0;
-                this.platforms = this.createLevel();
-                this.coins = this.createCoins();
-                this.enemies = this.createEnemies();
+                this.initializeLevel();
                 this.showLevelMessage('LEVEL ' + this.level);
             }
             
@@ -587,10 +561,7 @@
                 this.levelMessage = null;
                 this.levelMessageTime = 0;
                 this.respawnPlayer();
-                this.platforms = this.createLevel();
-                this.coins = this.createCoins();
-                this.enemies = this.createEnemies();
-                this.goal = { x: this.canvas.width * 0.9, y: this.canvas.height - 80, width: 40, height: 40 };
+                this.initializeLevel();
                 this.updateUI();
             }
             
@@ -623,17 +594,8 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // If game exists, update its layout
             if (window.gameInstance) {
-                window.gameInstance.platforms = window.gameInstance.createLevel();
-                window.gameInstance.coins = window.gameInstance.createCoins();
-                window.gameInstance.enemies = window.gameInstance.createEnemies();
-                window.gameInstance.goal = { 
-                    x: canvas.width * 0.9, 
-                    y: canvas.height - 80, 
-                    width: 40, 
-                    height: 40 
-                };
+                window.gameInstance.initializeLevel();
             }
         });
         
