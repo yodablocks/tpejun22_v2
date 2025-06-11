@@ -55,7 +55,7 @@
 <body>
     <div id="gameInfo">
         <div>Score: <span id="score">0</span></div>
-        <div>Lives: <span id="lives">5</span></div>
+        <div>Lives: <span id="lives">3</span></div>
         <div>Level: <span id="level">1</span></div>
     </div>
     
@@ -80,7 +80,7 @@
                 
                 // Game state
                 this.score = 0;
-                this.lives = 5;
+                this.lives = 3;
                 this.level = 1;
                 this.gameRunning = true;
                 this.levelMessage = null;
@@ -544,10 +544,19 @@
                 this.gameRunning = false;
                 this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.fillStyle = 'white';
+                
+                // Main "GAME OVER" text
+                this.ctx.fillStyle = '#FF0000';
                 this.ctx.font = '48px Arial';
                 this.ctx.textAlign = 'center';
-                this.ctx.fillText('GAME OVER', this.canvas.width/2, this.canvas.height/2);
+                this.ctx.fillText('GAME OVER', this.canvas.width/2, this.canvas.height/2 - 40);
+                
+                // Additional "A game over" text
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = '32px Arial';
+                this.ctx.fillText('A game over', this.canvas.width/2, this.canvas.height/2 + 10);
+                
+                // Score and restart instruction
                 this.ctx.font = '24px Arial';
                 this.ctx.fillText('Final Score: ' + this.score, this.canvas.width/2, this.canvas.height/2 + 60);
                 this.ctx.fillText('Press R to Restart', this.canvas.width/2, this.canvas.height/2 + 100);
@@ -555,7 +564,7 @@
             
             restartLevel() {
                 this.score = 0;
-                this.lives = 5;
+                this.lives = 3;
                 this.level = 1;
                 this.gameRunning = true;
                 this.levelMessage = null;
